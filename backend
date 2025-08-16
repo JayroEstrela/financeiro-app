@@ -1,0 +1,51 @@
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+const { processFile } = require('./routes');
+
+const app = express();
+app.use(cors());
+app.use(fileUpload());
+app.use(express.json());
+
+const PORT = process.env.PORT || 3001;
+
+app.post('/upload', processFile);
+
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+
+/*
+backend/routes.js
+*/
+const fs = require('fs');
+
+async function processFile(req, res) {
+    if (!req.files || !req.files.extrato) return res.status(400).send('Nenhum arquivo enviado');
+    const file = req.files.extrato;
+
+    // TODO: Implementar parsing real OFX/CSV/PDF
+    const dados = [{ data: '2025-08-16', valor: 100, descricao: 'Exemplo' }];
+    
+    res.json(dados);
+}
+
+module.exports = { processFile };
+
+/*
+backend/package.json (resumido)
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
+*/
+
+/*
