@@ -1,0 +1,70 @@
+frontend/src/App.jsx
+*/
+import React, { useState } from 'react';
+import Upload from './Upload';
+import Table from './Table';
+
+function App() {
+  const [lancamentos, setLancamentos] = useState([]);
+  return (
+    <div className="p-4">
+      <h1>Financeiro Saipos</h1>
+      <Upload setLancamentos={setLancamentos}/>
+      <Table lancamentos={lancamentos}/>
+    </div>
+  );
+}
+
+export default App;
+
+/*
+frontend/src/Upload.jsx
+*/
+import React from 'react';
+import axios from 'axios';
+
+function Upload({ setLancamentos }) {
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('extrato', file);
+
+    // Altere a URL para o backend online quando subir
+    const res = await axios.post('http://localhost:3001/upload', formData);
+    setLancamentos(res.data);
+  };
+
+  return <input type="file" onChange={handleUpload} />;
+}
+
+export default Upload;
+
+/*
+frontend/src/Table.jsx
+*/
+import React from 'react';
+
+function Table({ lancamentos }) {
+  return (
+    <table border="1" className="mt-4">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Valor</th>
+          <th>Descrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        {lancamentos.map((l, i) => (
+          <tr key={i}>
+            <td>{l.data}</td>
+            <td>{l.valor}</td>
+            <td>{l.descricao}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+export default Table;
